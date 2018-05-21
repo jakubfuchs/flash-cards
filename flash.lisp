@@ -36,11 +36,15 @@
    :my-docs (prompt-read "My Description")
    :learned? (y-or-n-p "Learned?")))
 
-;; MAIN ADD-METHOD
+;; MAIN METHODS
 (defun add-flash-card ()
   (loop (add-db-record (prompt-for-flash-card))
      (if (not (y-or-n-p "Add another? ")) (return)))
   (if (y-or-n-p "Save Database? ") (save-db *loaded-db-file*)))
+
+(defun update-flash-cards ())
+
+(defun delete-flash-cards ())
 
 ;; SAVE & LOADS
 (defun save-db (filename)
