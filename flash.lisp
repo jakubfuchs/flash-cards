@@ -66,3 +66,5 @@
   (remove-if-not
    #'(lambda (card) (equal (getf card :function) function))
    *db*))
+
+(defun random-print ())
