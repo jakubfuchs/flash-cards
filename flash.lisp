@@ -2,6 +2,7 @@
 (defvar *db* nil)
 (defvar *loaded-db-file* nil)
 (defvar *ex-db* nil)
+(defvar db-file-lisp "./flash-lisp.log")
 
 ;; DATABASE init
 (defun make-flash-card (&key function my-docs (learned? nil))
@@ -41,11 +42,6 @@
      (if (not (y-or-n-p "Add another? ")) (return)))
   (if (y-or-n-p "Save Database? ") (save-db *loaded-db-file*)))
 
-;; UPDATING
-(defun update-flash-card ())
-
-(defun delete-flash-card ())
-
 ;; SAVE & LOADS
 (defun save-db (filename)
   (with-open-file (out filename
@@ -54,11 +50,12 @@
     (with-standard-io-syntax
       (print *db* out))))
 
-(defun load-db (filename)
-  (with-open-file (in filename)
-    (with-standard-io-syntax
-      (setf *db* (read in))
-      (setf *loaded-db-file* filename))))
+(defun load-db (&Optional filename)
+  (let ((source (if filename filename db-file-lisp)))
+    (with-open-file (in source)
+      (with-standard-io-syntax
+        (setf *db* (read in))
+        (setf *loaded-db-file* source)))))
 
 ;; QUERING
 ;; simple function select
@@ -97,17 +94,23 @@
 (defun dump->nondocumented ()
   (dump-select (where :my-docs "")))
 
-(defun dump->documented ()
-  (dump-select (where :my-docs (not ""))))
+(defun dump->function (fun)
+  (dump-select (where :function (string-upcase fun))))
+
+;; UPDATING
+(defun update-flash-card ())
+
+(defun delete-flash-card ())
 
 ;; MAIN learn-it function
 (defun start ()
   "nth flash-card based on random number
 dump function name
-wait for user input/let him write description
-dump description
+wait for input/write description (not evaluated0/:quit
+dump description from my-docs
 prompt user if it is learned now
-  (if it means updated prop -> silent update and save database)
-remove function from running excersise
+  (if it means updated prop -> silently update and save database-to-file)
+remove function from running excersise list
 print another from remaining (nth rand to be ajusted by length of remaining)
-:quit to exit excersise at any prompt")
+repeat step 1....
+with :quit (rather as set of commands) to exit and :help to help the excersise at any prompt")
